@@ -1,0 +1,43 @@
+name: 'Deploy infra'
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - name: set up terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.1
+
+      - name: init
+        run: terraform init
+        working-directory: './src/'
+
+      - name: validate
+        run: terraform validate
+        working-directory: './src/'
+
+      - name: plan
+        run: terraform plan
+        working-directory: './src/'
+
+      - name: apply
+        run: terraform apply -auto-approve
+        working-directory: './src/'
