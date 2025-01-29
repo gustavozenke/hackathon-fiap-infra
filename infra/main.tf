@@ -14,7 +14,7 @@ provider "aws" {
 # terraform.tfstate
 terraform {
   backend "s3" {
-    bucket = "tech-challenge-terraform-tfstate"
+    bucket = "hackathon-fiap-terraform-tfstate"
     key    = "terraform.tfstate"
     region = "us-east-1"
   }
