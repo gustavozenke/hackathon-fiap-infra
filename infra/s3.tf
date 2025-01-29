@@ -146,7 +146,10 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
     filter_suffix = ".log"
   }
 
-  depends_on = [aws_sqs_queue.queue_inicio_processamento]
+  depends_on = [
+    aws_sqs_queue.queue_inicio_processamento,
+    aws_sqs_queue_policy.queue_policy_inicio_processamento
+  ]
 }
 
 output "bucket_raw_videos_arn" {
