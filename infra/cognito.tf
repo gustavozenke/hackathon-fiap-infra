@@ -43,6 +43,6 @@ resource "aws_cognito_user_pool_client" "client" {
 }
 
 resource "aws_cognito_user_pool_domain" "cognito-domain" {
-  domain       = "gustavozenke-cognito-domain"
+  domain       = "gustavozenke-domain-teste"
   user_pool_id = "${aws_cognito_user_pool.user_pool.id}"
 }
