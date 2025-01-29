@@ -1,5 +1,5 @@
 resource "aws_sqs_queue" "queue_inicio_processamento" {
-  name                      = "sqs-inicio-processamento"
+  name                      = "sqs-inicio-processamento-v2"
   delay_seconds             = 0
   max_message_size          = 262144  # 256KB
   message_retention_seconds = 345600   # 4 dias
@@ -14,8 +14,6 @@ resource "aws_sqs_queue" "queue_inicio_processamento" {
     maxReceiveCount     = 3
   })
 
-  policy = data.aws_iam_policy_document.sqs_policy.json
-
   tags = {
     Environment = "Production"
     Type        = "Standard"
@@ -23,7 +21,7 @@ resource "aws_sqs_queue" "queue_inicio_processamento" {
 }
 
 resource "aws_sqs_queue" "dlq_inicio_processamento" {
-  name                      = "dlq-inicio-processamento"
+  name                      = "dlq-inicio-processamento-v2"
   message_retention_seconds = 1209600  # 14 dias
   kms_master_key_id         = aws_kms_key.sqs_kms_key.arn
 
@@ -57,40 +55,6 @@ data "aws_iam_policy_document" "kms_policy" {
       type        = "Service"
       identifiers = ["sqs.amazonaws.com"]
     }
-  }
-}
-
-data "aws_iam_policy_document" "sqs_policy" {
-  statement {
-    sid    = "ForceSSL"
-    effect = "Deny"
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-    actions   = ["SQS:*"]
-    resources = [aws_sqs_queue.queue_inicio_processamento.arn]
-    condition {
-      test     = "Bool"
-      variable = "aws:SecureTransport"
-      values   = ["false"]
-    }
-  }
-
-  statement {
-    sid    = "AllowAppAccess"
-    effect = "Allow"
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/EC2-App-Role"]  # Ajuste para seu IAM Role
-    }
-    actions   = [
-      "sqs:SendMessage",
-      "sqs:ReceiveMessage",
-      "sqs:DeleteMessage",
-      "sqs:GetQueueAttributes"
-    ]
-    resources = [aws_sqs_queue.queue_inicio_processamento.arn]
   }
 }
 
