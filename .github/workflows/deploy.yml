@@ -28,16 +28,16 @@ jobs:
 
       - name: init
         run: terraform init
-        working-directory: './src/'
+        working-directory: './infra/'
 
       - name: validate
         run: terraform validate
-        working-directory: './src/'
+        working-directory: './infra/'
 
       - name: plan
         run: terraform plan
-        working-directory: './src/'
+        working-directory: './infra/'
 
       - name: apply
         run: terraform apply -auto-approve
-        working-directory: './src/'
+        working-directory: './infra/'
