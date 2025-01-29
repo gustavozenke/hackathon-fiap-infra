@@ -33,7 +33,8 @@ resource "aws_cognito_user_pool_client" "user_pool_client" {
 
   generate_secret = false
 
-  allowed_oauth_flows = ["code"]
+  allowed_oauth_flows = ["code", "implicit"]
+  allowed_oauth_flows_user_pool_client = true
   allowed_oauth_scopes = ["openid", "email", "profile"]
 
   callback_urls = ["https://oauth.pstmn.io/v1/callback"]
