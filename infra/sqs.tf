@@ -60,22 +60,26 @@ resource "aws_sqs_queue_redrive_allow_policy" "queue_processamento_redrive_allow
   })
 }
 
-data "aws_iam_policy_document" "queue_inicio_processamento_policy" {
-  statement {
-    effect = "Allow"
 
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
+resource "aws_sqs_queue_policy" "queue_policy_inicio_processamento" {
+  queue_url = aws_sqs_queue.queue_inicio_processamento.id
 
-    actions   = ["sqs:SendMessage"]
-    resources = ["*"]
-
-    condition {
-      test     = "ArnEquals"
-      variable = "aws:SourceArn"
-      values   = [aws_s3_bucket.bucket_raw_videos.arn]
-    }
-  }
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "s3.amazonaws.com"
+        },
+        Action = "SQS:SendMessage",
+        Resource = aws_sqs_queue.queue_inicio_processamento.arn,
+        Condition = {
+          ArnEquals = {
+            "aws:SourceArn" = aws_s3_bucket.bucket_raw_videos.arn
+          }
+        }
+      }
+    ]
+  })
 }
