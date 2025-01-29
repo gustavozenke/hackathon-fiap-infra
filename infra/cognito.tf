@@ -23,7 +23,7 @@ resource "aws_cognito_user_pool" "user_pool" {
     require_uppercase = true
   }
 
-  auto_verified_attributes = ["email", "phone_number"]
+  auto_verified_attributes = ["email"]
 }
 
 resource "aws_cognito_user_pool_client" "user_pool_client" {
