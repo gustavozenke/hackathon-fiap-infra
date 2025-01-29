@@ -60,7 +60,7 @@ resource "aws_sqs_queue_redrive_allow_policy" "queue_processamento_redrive_allow
   })
 }
 
-data "aws_iam_policy_document" "queue" {
+data "aws_iam_policy_document" "queue_inicio_processamento_policy" {
   statement {
     effect = "Allow"
 
