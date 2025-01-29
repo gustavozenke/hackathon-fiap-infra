@@ -25,8 +25,8 @@ jobs:
 
       - name: Init
         run: terraform init
-        working-directory: './src/'
+        working-directory: './infra/'
 
       - name: Destroy
         run: terraform destroy -state="terraform.tfstate" -auto-approve
-        working-directory: './src/'
+        working-directory: './infra/'
