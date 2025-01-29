@@ -2,13 +2,6 @@ resource "aws_cognito_user_pool" "user_pool" {
   name = "user_pool_usuarios_processamento_video"
 
   schema {
-    name                = "username"
-    attribute_data_type = "String"
-    mutable             = false
-    required            = true
-  }
-
-  schema {
     name                = "email"
     attribute_data_type = "String"
     mutable             = true
