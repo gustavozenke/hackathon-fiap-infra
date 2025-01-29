@@ -1,7 +1,7 @@
 resource "aws_cognito_user_pool" "user_pool" {
   name = "user-pool"
 
-  username_attributes = ["mail"]
+  username_attributes = ["email"]
   auto_verified_attributes = ["email"]
 
   password_policy {
