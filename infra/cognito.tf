@@ -1,7 +1,6 @@
 resource "aws_cognito_user_pool" "user_pool" {
   name = "user-pool"
 
-  username_attributes = ["email"]
   auto_verified_attributes = ["email"]
 
   password_policy {
@@ -15,8 +14,8 @@ resource "aws_cognito_user_pool" "user_pool" {
 
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
-    email_subject = "Account Confirmation"
-    email_message = "Your confirmation code is {####}"
+    email_subject        = "Account Confirmation"
+    email_message        = "Your confirmation code is {####}"
   }
 
   schema {
@@ -58,9 +57,14 @@ resource "aws_cognito_user_pool_client" "user_pool_client" {
 
   generate_secret = true
 
-  allowed_oauth_flows = ["code", "implicit"]
+  explicit_auth_flows = [
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH"
+  ]
+
+  allowed_oauth_flows                  = ["code", "implicit"]
   allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_scopes = ["openid", "email", "profile"]
+  allowed_oauth_scopes                 = ["openid", "email", "profile"]
 
   callback_urls = ["https://oauth.pstmn.io/v1/callback"]
   logout_urls   = ["https://oauth.pstmn.io/v1/logout"]
@@ -70,5 +74,5 @@ resource "aws_cognito_user_pool_client" "user_pool_client" {
 
 resource "aws_cognito_user_pool_domain" "cognito-domain" {
   domain       = "login-hackathon-fiap"
-  user_pool_id = "${aws_cognito_user_pool.user_pool.id}"
+  user_pool_id = aws_cognito_user_pool.user_pool.id
 }
