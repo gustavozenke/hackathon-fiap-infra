@@ -109,10 +109,29 @@ resource "aws_s3_bucket_policy" "bucket_raw_videos_bucket_policy" {
             "s3:x-amz-server-side-encryption" = "true"
           }
         }
+      },
+      {
+        Sid    = "AllowPresignedURLUploads"
+        Effect = "Allow"
+        Principal = "*"
+        Action = "s3:PutObject"
+        Resource = "${aws_s3_bucket.bucket_raw_videos.arn}/*"
+        Condition = {
+          StringEquals = {
+            "s3:signatureversion" = "v4"
+          }
+          Bool = {
+            "aws:SecureTransport" = "true"
+          }
+          Null = {
+            "s3:x-amz-server-side-encryption" = "false"
+          }
+        }
       }
     ]
   })
 }
+
 
 resource "aws_s3_bucket_lifecycle_configuration" "bucket_raw_videos_lifecycle" {
   bucket = aws_s3_bucket.bucket_raw_videos.id
