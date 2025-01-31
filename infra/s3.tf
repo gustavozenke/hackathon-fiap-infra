@@ -125,13 +125,10 @@ resource "aws_s3_bucket_policy" "bucket_raw_videos_bucket_policy" {
         Resource = "${aws_s3_bucket.bucket_raw_videos.arn}/*"
         Condition = {
           StringEquals = {
-            "s3:signatureversion" = "v4"
+            "s3:x-amz-server-side-encryption": "aws:kms"
           }
           Bool = {
             "aws:SecureTransport" = "true"
-          }
-          Null = {
-            "s3:x-amz-server-side-encryption" = "false"
           }
         }
       }
