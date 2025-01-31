@@ -71,10 +71,10 @@ resource "aws_s3_bucket_logging" "bucket_raw_videos_logging" {
 resource "aws_s3_bucket_public_access_block" "bucket_raw_videos_public_access" {
   bucket = aws_s3_bucket.bucket_raw_videos.id
 
-  block_public_acls       = true
+  block_public_acls       = false
   block_public_policy     = false
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket_policy" "bucket_raw_videos_bucket_policy" {
