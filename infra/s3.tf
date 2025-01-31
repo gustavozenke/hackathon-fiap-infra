@@ -22,7 +22,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "logs_encryption" 
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "logs_public_access" {
+resource "aws_s3_bucket_public_access_block" "bucket_logs_public_access" {
   bucket = aws_s3_bucket.access_logs_bucket_raw_videos.id
 
   block_public_acls       = true
@@ -72,7 +72,7 @@ resource "aws_s3_bucket_public_access_block" "bucket_raw_videos_public_access" {
   bucket = aws_s3_bucket.bucket_raw_videos.id
 
   block_public_acls       = true
-  block_public_policy     = true
+  block_public_policy     = false
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
