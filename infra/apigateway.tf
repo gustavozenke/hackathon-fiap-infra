@@ -28,7 +28,8 @@ resource "aws_api_gateway_method" "apigateway_presigned_url_method" {
   rest_api_id   = aws_api_gateway_rest_api.presigned_url_api.id
   resource_id   = aws_api_gateway_resource.apigateway_presigned_url_resource.id
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.cognito_authorizer.id
 }
 
 # Integração com Lambda para /presigned-url
@@ -79,4 +80,13 @@ resource "aws_api_gateway_deployment" "apigateway_presigned_url_deployment" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_api_gateway_authorizer" "cognito_authorizer" {
+  name          = "CognitoAuthorizer"
+  type          = "COGNITO_USER_POOLS"
+  rest_api_id   = aws_api_gateway_rest_api.presigned_url_api.id
+  provider_arns = aws_cognito_user_pool.user_pool.arn
+
+  depends_on = [aws_cognito_user_pool.user_pool]
 }
