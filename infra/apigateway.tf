@@ -25,11 +25,12 @@ resource "aws_api_gateway_resource" "apigateway_presigned_url_resource" {
 
 # Método GET para /presigned-url
 resource "aws_api_gateway_method" "apigateway_presigned_url_method" {
-  rest_api_id   = aws_api_gateway_rest_api.presigned_url_api.id
-  resource_id   = aws_api_gateway_resource.apigateway_presigned_url_resource.id
-  http_method   = "GET"
-  authorization = "COGNITO_USER_POOLS"
-  authorizer_id = aws_api_gateway_authorizer.cognito_authorizer.id
+  rest_api_id           = aws_api_gateway_rest_api.presigned_url_api.id
+  resource_id           = aws_api_gateway_resource.apigateway_presigned_url_resource.id
+  http_method           = "GET"
+  authorization         = "COGNITO_USER_POOLS"
+  authorizer_id         = aws_api_gateway_authorizer.cognito_authorizer.id
+  authorization_scopes  = ["openid", "email"]
 }
 
 # Integração com Lambda para /presigned-url
