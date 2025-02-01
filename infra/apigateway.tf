@@ -113,7 +113,7 @@ resource "aws_api_gateway_resource" "apigateway_status_processamento_resource" {
 }
 
 # Recurso principal /status-processamento/{nome_usuario}
-resource "aws_api_gateway_resource" "apigateway_status_processamento_resource" {
+resource "aws_api_gateway_resource" "apigateway_status_processamento_usuario_resource" {
   rest_api_id = aws_api_gateway_rest_api.apigateway_hackathon.id
   parent_id   = aws_api_gateway_rest_api.apigateway_hackathon.root_resource_id
   path_part   = "{nome_usuario}"
