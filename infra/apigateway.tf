@@ -38,7 +38,7 @@ resource "aws_api_gateway_integration" "apigateway_presigned_url_integration" {
   http_method             = aws_api_gateway_method.apigateway_presigned_url_method.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:975748149223:function:postech-token-generator/invocations"
+  uri                     = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:369780787289:function:hackathon-gera-urlpreassinada/invocations"
 }
 
 # Criar a resposta do método
