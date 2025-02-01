@@ -132,7 +132,7 @@ resource "aws_api_gateway_method" "apigateway_status_processamento_method" {
 # Integração com Lambda para /status-processamento
 resource "aws_api_gateway_integration" "apigateway_status_processamento_integration" {
   rest_api_id             = aws_api_gateway_rest_api.apigateway_hackathon.id
-  resource_id             = aws_api_gateway_resource.apigateway_status_processamento_resource.id
+  resource_id             = aws_api_gateway_resource.apigateway_status_processamento_usuario_resource.id
   http_method             = aws_api_gateway_method.apigateway_status_processamento_method.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
@@ -142,7 +142,7 @@ resource "aws_api_gateway_integration" "apigateway_status_processamento_integrat
 # Criar a resposta do método
 resource "aws_api_gateway_method_response" "apigateway_status_processamento_method_response" {
   rest_api_id = aws_api_gateway_rest_api.apigateway_hackathon.id
-  resource_id = aws_api_gateway_resource.apigateway_status_processamento_resource.id
+  resource_id = aws_api_gateway_resource.apigateway_status_processamento_usuario_resource.id
   http_method = aws_api_gateway_method.apigateway_status_processamento_method.http_method
   status_code = "200"
 
@@ -154,7 +154,7 @@ resource "aws_api_gateway_method_response" "apigateway_status_processamento_meth
 # Criar a resposta de integração
 resource "aws_api_gateway_integration_response" "apigateway_status_processamento_integration_response" {
   rest_api_id = aws_api_gateway_rest_api.apigateway_hackathon.id
-  resource_id = aws_api_gateway_resource.apigateway_status_processamento_resource.id
+  resource_id = aws_api_gateway_resource.apigateway_status_processamento_usuario_resource.id
   http_method = aws_api_gateway_method.apigateway_status_processamento_method.http_method
   status_code = aws_api_gateway_method_response.apigateway_status_processamento_method_response.status_code
 
