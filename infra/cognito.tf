@@ -72,6 +72,27 @@ resource "aws_cognito_user_pool_client" "user_pool_client" {
   supported_identity_providers = ["COGNITO"]
 }
 
+resource "aws_cognito_user_pool_client" "user_pool_client_v2" {
+  name         = "appClientV2"
+  user_pool_id = aws_cognito_user_pool.user_pool
+
+  allowed_oauth_flows_user_pool_client = true
+  generate_secret = false
+
+  # Habilitar OAuth 2.0
+  allowed_oauth_flows = ["code", "implicit"]
+  allowed_oauth_scopes = ["openid", "email", "profile"]
+
+  callback_urls = ["https://oauth.pstmn.io/v1/callback"]
+  logout_urls   = ["https://myapp.com/logout"]
+
+  explicit_auth_flows = [
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH",
+    "ALLOW_USER_SRP_AUTH"
+  ]
+}
+
 resource "aws_cognito_user_pool_domain" "cognito-domain" {
   domain       = "login-hackathon-fiap"
   user_pool_id = aws_cognito_user_pool.user_pool.id
