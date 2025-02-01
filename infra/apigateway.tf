@@ -109,7 +109,7 @@ resource "aws_lambda_permission" "allow_api_gateway_status_processamento" {
 resource "aws_api_gateway_resource" "apigateway_status_processamento_resource" {
   rest_api_id = aws_api_gateway_rest_api.apigateway_hackathon.id
   parent_id   = aws_api_gateway_rest_api.apigateway_hackathon.root_resource_id
-  path_part   = "status-processamento"
+  path_part   = "status-processamento/{nome_usuario}"
 }
 
 # Método GET para /status-processamento
