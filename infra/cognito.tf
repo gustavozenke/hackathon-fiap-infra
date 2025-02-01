@@ -74,7 +74,7 @@ resource "aws_cognito_user_pool_client" "user_pool_client" {
 
 resource "aws_cognito_user_pool_client" "user_pool_client_v2" {
   name         = "appClientV2"
-  user_pool_id = aws_cognito_user_pool.user_pool
+  user_pool_id = aws_cognito_user_pool.user_pool.id
 
   allowed_oauth_flows_user_pool_client = true
   generate_secret = false
