@@ -127,6 +127,10 @@ resource "aws_api_gateway_method" "apigateway_status_processamento_method" {
   authorization         = "COGNITO_USER_POOLS"
   authorizer_id         = aws_api_gateway_authorizer.cognito_authorizer.id
   authorization_scopes  = ["openid", "email"]
+
+  request_parameters = {
+    "method.request.path.nome_usuario" = true
+  }
 }
 
 # Integração com Lambda para /status-processamento
