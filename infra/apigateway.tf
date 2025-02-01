@@ -115,14 +115,14 @@ resource "aws_api_gateway_resource" "apigateway_status_processamento_resource" {
 # Recurso principal /status-processamento/{nome_usuario}
 resource "aws_api_gateway_resource" "apigateway_status_processamento_usuario_resource" {
   rest_api_id = aws_api_gateway_rest_api.apigateway_hackathon.id
-  parent_id   = aws_api_gateway_rest_api.apigateway_hackathon.root_resource_id
+  parent_id   = aws_api_gateway_resource.apigateway_status_processamento_resource.id
   path_part   = "{nome_usuario}"
 }
 
 # Método GET para /status-processamento
 resource "aws_api_gateway_method" "apigateway_status_processamento_method" {
   rest_api_id           = aws_api_gateway_rest_api.apigateway_hackathon.id
-  resource_id           = aws_api_gateway_resource.apigateway_status_processamento_resource.id
+  resource_id           = aws_api_gateway_resource.apigateway_status_processamento_usuario_resource.id
   http_method           = "GET"
   authorization         = "COGNITO_USER_POOLS"
   authorizer_id         = aws_api_gateway_authorizer.cognito_authorizer.id
