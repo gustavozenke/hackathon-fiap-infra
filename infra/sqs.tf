@@ -121,3 +121,7 @@ resource "aws_sqs_queue_redrive_allow_policy" "queue_gravar_status_processamento
 
 # ---------------------------------------------------------------------------
 
+resource "aws_lambda_event_source_mapping" "sqs_to_lambda_integration" {
+  event_source_arn = aws_sqs_queue.queue_gravar_status_processamento.arn
+  function_name    = "hackathon-status-processamento"
+}
