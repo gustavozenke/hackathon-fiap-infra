@@ -5,6 +5,7 @@ resource "aws_sqs_queue" "queue_inicio_processamento" {
   max_message_size          = 2048
   message_retention_seconds = 86400
   receive_wait_time_seconds = 0
+  visibility_timeout_seconds = 120
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.dlq_queue_inicio_processamento.arn
     maxReceiveCount     = 4
@@ -62,6 +63,7 @@ resource "aws_sqs_queue" "queue_processamento" {
   max_message_size          = 2048
   message_retention_seconds = 86400
   receive_wait_time_seconds = 0
+  visibility_timeout_seconds = 900
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.dlq_queue_processamento.arn
     maxReceiveCount     = 4
