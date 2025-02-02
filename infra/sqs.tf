@@ -29,6 +29,32 @@ resource "aws_sqs_queue_redrive_allow_policy" "queue_inicio_processamento_redriv
   })
 }
 
+resource "aws_sqs_queue_policy" "queue_policy_inicio_processamento" {
+  queue_url = aws_sqs_queue.queue_inicio_processamento.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "s3.amazonaws.com"
+        },
+        Action = "SQS:SendMessage",
+        Resource = aws_sqs_queue.queue_inicio_processamento.arn,
+        Condition = {
+          ArnEquals = {
+            "aws:SourceArn" = aws_s3_bucket.bucket_raw_videos.arn
+          }
+        }
+      }
+    ]
+  })
+}
+
+# ---------------------------------------------------------------------------
+
+
 resource "aws_sqs_queue" "queue_processamento" {
   name                      = "sqs-processamento"
   sqs_managed_sse_enabled   = true
@@ -60,26 +86,38 @@ resource "aws_sqs_queue_redrive_allow_policy" "queue_processamento_redrive_allow
   })
 }
 
+# ---------------------------------------------------------------------------
 
-resource "aws_sqs_queue_policy" "queue_policy_inicio_processamento" {
-  queue_url = aws_sqs_queue.queue_inicio_processamento.id
+resource "aws_sqs_queue" "queue_gravar_status_processamento" {
+  name                      = "sqs-gravar-status-processamento"
+  sqs_managed_sse_enabled   = true
+  delay_seconds             = 90
+  max_message_size          = 2048
+  message_retention_seconds = 86400
+  receive_wait_time_seconds = 10
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.dlq_queue_gravar_status_processamento.arn
+    maxReceiveCount     = 4
+  })
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          Service = "s3.amazonaws.com"
-        },
-        Action = "SQS:SendMessage",
-        Resource = aws_sqs_queue.queue_inicio_processamento.arn,
-        Condition = {
-          ArnEquals = {
-            "aws:SourceArn" = aws_s3_bucket.bucket_raw_videos.arn
-          }
-        }
-      }
-    ]
+
+  tags = {
+    Environment = "production"
+  }
+}
+
+resource "aws_sqs_queue" "dlq_queue_gravar_status_processamento" {
+  name = "dlq-gravar-status-processamento"
+}
+
+resource "aws_sqs_queue_redrive_allow_policy" "queue_gravar_status_processamento_redrive_allow_policy" {
+  queue_url = aws_sqs_queue.dlq_queue_gravar_status_processamento.id
+
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue",
+    sourceQueueArns   = [aws_sqs_queue.queue_gravar_status_processamento.arn]
   })
 }
+
+# ---------------------------------------------------------------------------
+
