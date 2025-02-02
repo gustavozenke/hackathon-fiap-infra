@@ -45,26 +45,12 @@ resource "aws_s3_bucket_versioning" "bucket_raw_videos_versioning" {
   }
 }
 
-resource "aws_kms_key" "s3_kms_key" {
-  description             = "KMS key for S3 bucket encryption"
-  deletion_window_in_days = 30
-  enable_key_rotation     = true
-}
-
-resource "aws_kms_alias" "s3_kms_alias" {
-  name          = "alias/s3-kms"
-  target_key_id = aws_kms_key.s3_kms_key.key_id
-
-  depends_on = [aws_kms_key.s3_kms_key]
-}
-
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_raw_videos_encryption" {
   bucket = aws_s3_bucket.bucket_raw_videos.id
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.s3_kms_key.arn
-      sse_algorithm     = "aws:kms"
+      sse_algorithm     = "AES256"
     }
   }
 }
@@ -125,7 +111,7 @@ resource "aws_s3_bucket_policy" "bucket_raw_videos_bucket_policy" {
         Resource = "${aws_s3_bucket.bucket_raw_videos.arn}/*"
         Condition = {
           StringEquals = {
-            "s3:x-amz-server-side-encryption": "aws:kms"
+            "s3:x-amz-server-side-encryption": "AES256"
           }
           Bool = {
             "aws:SecureTransport" = "true"
