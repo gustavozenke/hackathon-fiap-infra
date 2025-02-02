@@ -152,7 +152,6 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
   queue {
     queue_arn     = aws_sqs_queue.queue_inicio_processamento.arn
     events        = ["s3:ObjectCreated:*"]
-    filter_suffix = ".log"
   }
 
   depends_on = [
