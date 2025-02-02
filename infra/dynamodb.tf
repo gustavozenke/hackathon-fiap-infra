@@ -31,12 +31,12 @@ resource "aws_dynamodb_table" "status_processamento" {
   }
 
   attribute {
-    name = "nome_video"
+    name = "data_hora_inclusao"
     type = "S"
   }
 
   hash_key  = "nome_usuario"
-  range_key = "nome_video"
+  range_key = "data_hora_inclusao"
 
   tags = {
     Environment = "production"
