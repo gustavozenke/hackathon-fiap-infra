@@ -73,53 +73,58 @@ resource "aws_s3_bucket_public_access_block" "bucket_raw_videos_public_access" {
 resource "aws_s3_bucket_policy" "bucket_raw_videos_bucket_policy" {
   bucket = aws_s3_bucket.bucket_raw_videos.id
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid    = "AllowSSLRequestsOnly"
-        Effect = "Deny"
-        Principal = "*"
-        Action = "s3:*"
-        Resource = [
-          aws_s3_bucket.bucket_raw_videos.arn,
-          "${aws_s3_bucket.bucket_raw_videos.arn}/*"
-        ]
-        Condition = {
-          Bool = {
-            "aws:SecureTransport" = "false"
+  policy = jsonencode(
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Sid": "AllowSSLRequestsOnly",
+          "Effect": "Deny",
+          "Principal": "*",
+          "Action": "s3:*",
+          "Resource": [
+            "arn:aws:s3:::bucket-hackathon-fiap-raw-videos",
+            "arn:aws:s3:::bucket-hackathon-fiap-raw-videos/*"
+          ],
+          "Condition": {
+            "Bool": {
+              "aws:SecureTransport": "false"
+            }
+          }
+        },
+        {
+          "Sid": "EnforceEncryption",
+          "Effect": "Deny",
+          "Principal": "*",
+          "NotPrincipal": {
+            "AWS": "arn:aws:iam::369780787289:role/LabRole"
+          },
+          "Action": "s3:PutObject",
+          "Resource": "arn:aws:s3:::bucket-hackathon-fiap-raw-videos/*",
+          "Condition": {
+            "Null": {
+              "s3:x-amz-server-side-encryption": "true"
+            }
+          }
+        },
+        {
+          "Sid": "AllowPresignedURLUploads",
+          "Effect": "Allow",
+          "Principal": "*",
+          "Action": "s3:PutObject",
+          "Resource": "arn:aws:s3:::bucket-hackathon-fiap-raw-videos/*",
+          "Condition": {
+            "StringEquals": {
+              "s3:x-amz-server-side-encryption": "AES256"
+            },
+            "Bool": {
+              "aws:SecureTransport": "true"
+            }
           }
         }
-      },
-      {
-        Sid    = "EnforceEncryption"
-        Effect = "Deny"
-        Principal = "*"
-        Action = "s3:PutObject"
-        Resource = "${aws_s3_bucket.bucket_raw_videos.arn}/*"
-        Condition = {
-          Null = {
-            "s3:x-amz-server-side-encryption" = "true"
-          }
-        }
-      },
-      {
-        Sid    = "AllowPresignedURLUploads"
-        Effect = "Allow"
-        Principal = "*"
-        Action = "s3:PutObject"
-        Resource = "${aws_s3_bucket.bucket_raw_videos.arn}/*"
-        Condition = {
-          StringEquals = {
-            "s3:x-amz-server-side-encryption": "AES256"
-          }
-          Bool = {
-            "aws:SecureTransport" = "true"
-          }
-        }
-      }
-    ]
-  })
+      ]
+    }
+  )
 }
 
 
