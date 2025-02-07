@@ -115,38 +115,3 @@ output "bucket_raw_videos_arn" {
 output "bucket_raw_videos_log_arn" {
   value = aws_s3_bucket.access_logs_bucket_raw_videos.arn
 }
-
-##------------------------------------------------------------------------------------
-
-resource "aws_s3_bucket" "public_bucket_zip_frames" {
-  bucket = "bucket-hackathon-fiap-zip-frames"
-}
-
-resource "aws_s3_bucket_public_access_block" "public_block_bucket_zip_frames" {
-  bucket                  = aws_s3_bucket.public_bucket_zip_frames.id
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-
-resource "aws_s3_bucket_policy" "public_policy_bucket_zip_frames" {
-  bucket = aws_s3_bucket.public_bucket_zip_frames.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid       = "PublicReadGetObject"
-        Effect    = "Allow"
-        Principal = "*"
-        Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.public_bucket_zip_frames.arn}/*"
-      }
-    ]
-  })
-}
-
-resource "aws_s3_bucket_acl" "public_acl_bucket_zip_frames" {
-  bucket = aws_s3_bucket.public_bucket_zip_frames.id
-  acl    = "public-read"
-}
