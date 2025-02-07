@@ -70,63 +70,6 @@ resource "aws_s3_bucket_public_access_block" "bucket_raw_videos_public_access" {
   restrict_public_buckets = false
 }
 
-# resource "aws_s3_bucket_policy" "bucket_raw_videos_bucket_policy" {
-#   bucket = aws_s3_bucket.bucket_raw_videos.id
-#
-#   policy = jsonencode(
-#     {
-#       "Version": "2012-10-17",
-#       "Statement": [
-#         {
-#           "Sid": "AllowSSLRequestsOnly",
-#           "Effect": "Deny",
-#           "Principal": "*",
-#           "Action": "s3:*",
-#           "Resource": [
-#             "arn:aws:s3:::bucket-hackathon-fiap-raw-videos",
-#             "arn:aws:s3:::bucket-hackathon-fiap-raw-videos/*"
-#           ],
-#           "Condition": {
-#             "Bool": {
-#               "aws:SecureTransport": "false"
-#             }
-#           }
-#         },
-#         {
-#           "Sid": "EnforceEncryption",
-#           "Effect": "Deny",
-#           "Principal": "*",
-#           "NotPrincipal": {
-#             "AWS": "arn:aws:iam::369780787289:role/LabRole"
-#           },
-#           "Action": "s3:PutObject",
-#           "Resource": "arn:aws:s3:::bucket-hackathon-fiap-raw-videos/*",
-#           "Condition": {
-#             "Null": {
-#               "s3:x-amz-server-side-encryption": "true"
-#             }
-#           }
-#         },
-#         {
-#           "Sid": "AllowPresignedURLUploads",
-#           "Effect": "Allow",
-#           "Principal": "*",
-#           "Action": "s3:PutObject",
-#           "Resource": "arn:aws:s3:::bucket-hackathon-fiap-raw-videos/*",
-#           "Condition": {
-#             "StringEquals": {
-#               "s3:x-amz-server-side-encryption": "AES256"
-#             },
-#             "Bool": {
-#               "aws:SecureTransport": "true"
-#             }
-#           }
-#         }
-#       ]
-#     }
-#   )
-# }
-
 
 resource "aws_s3_bucket_lifecycle_configuration" "bucket_raw_videos_lifecycle" {
   bucket = aws_s3_bucket.bucket_raw_videos.id
@@ -171,4 +114,39 @@ output "bucket_raw_videos_arn" {
 
 output "bucket_raw_videos_log_arn" {
   value = aws_s3_bucket.access_logs_bucket_raw_videos.arn
+}
+
+##------------------------------------------------------------------------------------
+
+resource "aws_s3_bucket" "public_bucket_zip_frames" {
+  bucket = "bucket-hackathon-fiap-zip-frames"
+}
+
+resource "aws_s3_bucket_public_access_block" "public_block_bucket_zip_frames" {
+  bucket                  = aws_s3_bucket.public_bucket_zip_frames.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "public_policy_bucket_zip_frames" {
+  bucket = aws_s3_bucket.public_bucket_zip_frames.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.public_bucket_zip_frames.arn}/*"
+      }
+    ]
+  })
+}
+
+resource "aws_s3_bucket_acl" "public_acl_bucket_zip_frames" {
+  bucket = aws_s3_bucket.public_bucket_zip_frames.id
+  acl    = "public-read"
 }
