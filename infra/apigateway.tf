@@ -80,7 +80,7 @@ resource "aws_api_gateway_integration" "apigateway_presigned_url_integration" {
   uri                     = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:369780787289:function:hackathon-gera-urlpreassinada/invocations"
 }
 
-# Criar a resposta do método
+# Criar a resposta do metodo
 resource "aws_api_gateway_method_response" "apigateway_presigned_url_method_response" {
   rest_api_id = aws_api_gateway_rest_api.apigateway_hackathon.id
   resource_id = aws_api_gateway_resource.apigateway_presigned_url_resource.id
