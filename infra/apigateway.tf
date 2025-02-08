@@ -28,12 +28,30 @@ resource "aws_api_gateway_resource" "apigateway_presigned_url_resource" {
 # Criar um validador de requisição para validar header e body
 resource "aws_api_gateway_request_validator" "apigateway_request_validator" {
   rest_api_id                    = aws_api_gateway_rest_api.apigateway_hackathon.id
-  name                            = "validate-header-body"
-  validate_request_body           = true
-  validate_request_parameters     = true
+  name                           = "presigned-url-validator"
+  validate_request_body          = true
+  validate_request_parameters    = true
 }
 
-# Mthod POST para /presigned-url
+# Modelo do corpo da requisição
+resource "aws_api_gateway_model" "request_model_presigned_url_post" {
+  rest_api_id  = aws_api_gateway_rest_api.apigateway_hackathon.id
+  name         = "PresignedUrlRequestModel"
+  description  = "Validação do corpo da requisição"
+  content_type = "application/json"
+
+  schema = jsonencode({
+    type = "object"
+    required = ["nome_video"]
+    properties = {
+      nome_video = {
+        type = "string"
+      }
+    }
+  })
+}
+
+# Method POST para /presigned-url
 resource "aws_api_gateway_method" "apigateway_presigned_url_method" {
   rest_api_id          = aws_api_gateway_rest_api.apigateway_hackathon.id
   resource_id          = aws_api_gateway_resource.apigateway_presigned_url_resource.id
@@ -45,6 +63,10 @@ resource "aws_api_gateway_method" "apigateway_presigned_url_method" {
 
   request_parameters = {
     "method.request.header.Content-Type" = true
+  }
+
+  request_models = {
+    "application/json" = aws_api_gateway_model.request_model_presigned_url_post.name
   }
 }
 
