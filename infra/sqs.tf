@@ -63,7 +63,7 @@ resource "aws_sqs_queue" "queue_processamento" {
   max_message_size          = 2048
   message_retention_seconds = 86400
   receive_wait_time_seconds = 0
-  visibility_timeout_seconds = 900
+  visibility_timeout_seconds = 3600
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.dlq_queue_processamento.arn
     maxReceiveCount     = 4
@@ -137,3 +137,42 @@ resource "aws_lambda_event_source_mapping" "sqs_to_lambda_inicio_processamento_i
 }
 
 # ---------------------------------------------------------------------------
+
+resource "aws_sqs_queue" "queue_comunicacao_cliente" {
+  name                      = "sqs-comunicacao-cliente"
+  sqs_managed_sse_enabled   = true
+  delay_seconds             = 0
+  max_message_size          = 2048
+  message_retention_seconds = 86400
+  receive_wait_time_seconds = 0
+  visibility_timeout_seconds = 120
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.dlq_queue_comunicacao_cliente.arn
+    maxReceiveCount     = 4
+  })
+
+
+  tags = {
+    Environment = "production"
+  }
+}
+
+resource "aws_sqs_queue" "dlq_queue_comunicacao_cliente" {
+  name = "dlq-comunicacao-cliente"
+}
+
+resource "aws_sqs_queue_redrive_allow_policy" "queue_comunicacao_cliente_redrive_allow_policy" {
+  queue_url = aws_sqs_queue.dlq_queue_comunicacao_cliente.id
+
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue",
+    sourceQueueArns   = [aws_sqs_queue.queue_comunicacao_cliente.arn]
+  })
+}
+
+# ---------------------------------------------------------------------------
+
+resource "aws_lambda_event_source_mapping" "sqs_to_lambda_comunicacao_cliente_integration" {
+  event_source_arn = aws_sqs_queue.queue_comunicacao_cliente.arn
+  function_name    = "hackathon-comunicacao-cliente"
+}
