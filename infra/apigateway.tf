@@ -33,7 +33,7 @@ resource "aws_api_gateway_request_validator" "apigateway_request_validator" {
   validate_request_parameters     = true
 }
 
-# Método POST para /presigned-url
+# Mthod POST para /presigned-url
 resource "aws_api_gateway_method" "apigateway_presigned_url_method" {
   rest_api_id          = aws_api_gateway_rest_api.apigateway_hackathon.id
   resource_id          = aws_api_gateway_resource.apigateway_presigned_url_resource.id
