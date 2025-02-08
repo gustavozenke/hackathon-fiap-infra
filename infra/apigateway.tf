@@ -15,7 +15,7 @@ resource "aws_lambda_permission" "allow_api_gateway_presigned_url" {
   action        = "lambda:InvokeFunction"
   function_name = "hackathon-gera-urlpreassinada"
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_api_gateway_rest_api.apigateway_hackathon.execution_arn}/*/*"
+  source_arn    = "${aws_api_gateway_rest_api.apigateway_hackathon.execution_arn}/*/*"
 }
 
 # Recurso principal /presigned-url
@@ -25,14 +25,24 @@ resource "aws_api_gateway_resource" "apigateway_presigned_url_resource" {
   path_part   = "presigned-url"
 }
 
-# Método GET para /presigned-url
+# Criar um validador de requisição para validar header e body
+resource "aws_api_gateway_request_validator" "apigateway_request_validator" {
+  rest_api_id                    = aws_api_gateway_rest_api.apigateway_hackathon.id
+  name                            = "validate-header-body"
+  validate_request_body           = true
+  validate_request_parameters     = true
+}
+
+# Mthod POST para /presigned-url
 resource "aws_api_gateway_method" "apigateway_presigned_url_method" {
-  rest_api_id           = aws_api_gateway_rest_api.apigateway_hackathon.id
-  resource_id           = aws_api_gateway_resource.apigateway_presigned_url_resource.id
-  http_method           = "GET"
-  authorization         = "COGNITO_USER_POOLS"
-  authorizer_id         = aws_api_gateway_authorizer.cognito_authorizer.id
-  authorization_scopes  = ["openid", "email"]
+  rest_api_id          = aws_api_gateway_rest_api.apigateway_hackathon.id
+  resource_id          = aws_api_gateway_resource.apigateway_presigned_url_resource.id
+  http_method          = "POST"
+  authorization        = "COGNITO_USER_POOLS"
+  authorizer_id        = aws_api_gateway_authorizer.cognito_authorizer.id
+  authorization_scopes = ["openid", "email"]
+  request_validator_id = aws_api_gateway_request_validator.apigateway_request_validator.id
+
   request_parameters = {
     "method.request.header.Content-Type" = true
   }
