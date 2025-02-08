@@ -38,6 +38,12 @@ resource "aws_api_gateway_method" "apigateway_presigned_url_method" {
   }
 }
 
+resource "aws_api_gateway_request_validator" "apigateway_presigned_request_validator" {
+  rest_api_id   = aws_api_gateway_rest_api.apigateway_hackathon.id
+  name          = "validate-header"
+  validate_request_parameters = true
+}
+
 # Integração com Lambda para /presigned-url
 resource "aws_api_gateway_integration" "apigateway_presigned_url_integration" {
   rest_api_id             = aws_api_gateway_rest_api.apigateway_hackathon.id
