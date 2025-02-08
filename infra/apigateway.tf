@@ -33,6 +33,9 @@ resource "aws_api_gateway_method" "apigateway_presigned_url_method" {
   authorization         = "COGNITO_USER_POOLS"
   authorizer_id         = aws_api_gateway_authorizer.cognito_authorizer.id
   authorization_scopes  = ["openid", "email"]
+  request_parameters = {
+    "method.request.header.Content-Type" = true
+  }
 }
 
 # Integração com Lambda para /presigned-url
@@ -78,7 +81,6 @@ resource "aws_api_gateway_deployment" "apigateway_presigned_url_deployment" {
   ]
 
   rest_api_id = aws_api_gateway_rest_api.apigateway_hackathon.id
-  stage_name  = "prod"
 
   lifecycle {
     create_before_destroy = true
