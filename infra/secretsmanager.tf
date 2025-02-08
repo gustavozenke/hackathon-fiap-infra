@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "sms_secret" {
-  name        = "ss-credentials"
+  name        = "sms-credentials"
   description = "Secrets ara armazenar credenciais para envio de comunicacao SMS"
 }
 
