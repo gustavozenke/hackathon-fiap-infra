@@ -9,6 +9,15 @@ resource "aws_api_gateway_rest_api" "apigateway_hackathon" {
 
 #-------------------------------------------------------------------------------------------------
 
+# Permissão para a função Lambda ser invocada pelo API Gateway
+resource "aws_lambda_permission" "allow_api_gateway_presigned_url" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "hackathon-gera-urlpreassinada"
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.apigateway_hackathon.execution_arn}/*/*"
+}
+
 # Recurso principal /presigned-url
 resource "aws_api_gateway_resource" "apigateway_presigned_url_resource" {
   rest_api_id = aws_api_gateway_rest_api.apigateway_hackathon.id
@@ -120,6 +129,15 @@ resource "aws_api_gateway_authorizer" "cognito_authorizer" {
 }
 
 ## ---------------------------------------------------------------------------------
+
+# Permissão para a função Lambda ser invocada pelo API Gateway
+resource "aws_lambda_permission" "allow_api_gateway_status_processamento" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "hackathon-status-processamento"
+  principal     = "apigateway.amazonaws.com"
+  source_arn = "${aws_api_gateway_rest_api.apigateway_hackathon.execution_arn}/*/*"
+}
 
 # Recurso principal /status-processamento
 resource "aws_api_gateway_resource" "apigateway_status_processamento_resource" {
